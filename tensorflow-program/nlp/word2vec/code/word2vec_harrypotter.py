@@ -1,6 +1,6 @@
 #coding=GBK
 '''
-Created on 2017Äê4ÔÂ5ÈÕ
+Created on 2017å¹´4æœˆ5æ—¥
 
 @author: Scorpio.Lu
 '''
@@ -11,38 +11,38 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 '''
-¶ÁÈ¡Ô´ÎÄ¼ş,²¢×ªÎªlistÊä³ö
-@param filename:ÎÄ¼şÃû
+è¯»å–æºæ–‡ä»¶,å¹¶è½¬ä¸ºlistè¾“å‡º
+@param filename:æ–‡ä»¶å
 @return: list of words
 '''
 def read_file(filename):
     f=open(filename,'r')
     file_read=f.read()
-    words_=re.sub("[^a-zA-Z]+", " ",file_read).lower() #ÕıÔòÆ¥Åä,Ö»ÁôÏÂµ¥´Ê£¬ÇÒ´óĞ´¸ÄĞ¡Ğ´
+    words_=re.sub("[^a-zA-Z]+", " ",file_read).lower() #æ­£åˆ™åŒ¹é…,åªç•™ä¸‹å•è¯ï¼Œä¸”å¤§å†™æ”¹å°å†™
     words=list(words_.split())  #length of words:1121985
     return words
     
-words=read_file('¹şÀû²¨ÌØ1-7Ó¢ÎÄÔ­°æ.txt')
+words=read_file('å“ˆåˆ©æ³¢ç‰¹1-7è‹±æ–‡åŸç‰ˆ.txt')
 
 
-vocabulary_size=2000  #Ô¤¶¨ÒåÆµ·±µ¥´Ê¿âµÄ³¤¶È
-count=[['UNK',-1]]    #³õÊ¼»¯µ¥´ÊÆµÊıÍ³¼Æ¼¯ºÏ
+vocabulary_size=2000  #é¢„å®šä¹‰é¢‘ç¹å•è¯åº“çš„é•¿åº¦
+count=[['UNK',-1]]    #åˆå§‹åŒ–å•è¯é¢‘æ•°ç»Ÿè®¡é›†åˆ
 
 '''
-1.¸ø@param ¡°words¡±ÖĞ³öÏÖ¹ıµÄµ¥´Ê×öÆµÊıÍ³¼Æ£¬È¡top 1999ÆµÊıµÄµ¥´Ê·ÅÈëdictionaryÖĞ£¬ÒÔ±ã¿ìËÙ²éÑ¯¡£
-2.¸ø¹şÀû²¨ÌØÕâ±¾¡°µ¥´Ê¿â¡±@param¡°words¡±±àÂë£¬³öÏÖÔÚtop 1999Ö®ÍâµÄµ¥´Ê£¬Í³Ò»ÁîÆäÎª¡°UNK¡±£¨Î´Öª£©£¬±àºÅÎª0£¬²¢Í³¼ÆÕâĞ©µ¥´ÊµÄÊıÁ¿¡£
-@return: ¹şÀû²¨ÌØÕâ±¾ÊéµÄ±àÂëdata£¬Ã¿¸öµ¥´ÊµÄÆµÊıÍ³¼Æcount£¬´Ê»ã±ídictionary¼°Æä·´×ªĞÎÊ½reverse_dictionary
+1.ç»™@param â€œwordsâ€ä¸­å‡ºç°è¿‡çš„å•è¯åšé¢‘æ•°ç»Ÿè®¡ï¼Œå–top 1999é¢‘æ•°çš„å•è¯æ”¾å…¥dictionaryä¸­ï¼Œä»¥ä¾¿å¿«é€ŸæŸ¥è¯¢ã€‚
+2.ç»™å“ˆåˆ©æ³¢ç‰¹è¿™æœ¬â€œå•è¯åº“â€@paramâ€œwordsâ€ç¼–ç ï¼Œå‡ºç°åœ¨top 1999ä¹‹å¤–çš„å•è¯ï¼Œç»Ÿä¸€ä»¤å…¶ä¸ºâ€œUNKâ€ï¼ˆæœªçŸ¥ï¼‰ï¼Œç¼–å·ä¸º0ï¼Œå¹¶ç»Ÿè®¡è¿™äº›å•è¯çš„æ•°é‡ã€‚
+@return: å“ˆåˆ©æ³¢ç‰¹è¿™æœ¬ä¹¦çš„ç¼–ç dataï¼Œæ¯ä¸ªå•è¯çš„é¢‘æ•°ç»Ÿè®¡countï¼Œè¯æ±‡è¡¨dictionaryåŠå…¶åè½¬å½¢å¼reverse_dictionary
 '''
 def build_dataset(words):
-    counter=collections.Counter(words).most_common(vocabulary_size-1) #length of all counter:22159 È¡top1999ÆµÊıµÄµ¥´Ê×÷Îªvocabulary£¬ÆäËûµÄ×÷Îªunknown
+    counter=collections.Counter(words).most_common(vocabulary_size-1) #length of all counter:22159 å–top1999é¢‘æ•°çš„å•è¯ä½œä¸ºvocabularyï¼Œå…¶ä»–çš„ä½œä¸ºunknown
     count.extend(counter)
-    #´î½¨dictionary
+    #æ­å»ºdictionary
     dictionary={}
     for word,_ in count:
         dictionary[word]=len(dictionary)
     data=[]
-    #È«²¿µ¥´Ê×ªÎª±àºÅ
-    #ÏÈÅĞ¶ÏÕâ¸öµ¥´ÊÊÇ·ñ³öÏÖÔÚdictionary£¬Èç¹ûÊÇ£¬¾Í×ª³É±àºÅ£¬Èç¹û²»ÊÇ£¬Ôò×ªÎª±àºÅ0£¨´ú±íUNK£©
+    #å…¨éƒ¨å•è¯è½¬ä¸ºç¼–å·
+    #å…ˆåˆ¤æ–­è¿™ä¸ªå•è¯æ˜¯å¦å‡ºç°åœ¨dictionaryï¼Œå¦‚æœæ˜¯ï¼Œå°±è½¬æˆç¼–å·ï¼Œå¦‚æœä¸æ˜¯ï¼Œåˆ™è½¬ä¸ºç¼–å·0ï¼ˆä»£è¡¨UNKï¼‰
     unk_count=0
     for word in words:
         if word in dictionary:
@@ -56,7 +56,7 @@ def build_dataset(words):
     return data,count,dictionary,reverse_dictionary
 
 data,count,dictionary,reverse_dictionary=build_dataset(words)   
-del words #É¾³ıÔ­Ê¼µ¥´ÊÁĞ±í£¬½ÚÔ¼ÄÚ´æ
+del words #åˆ é™¤åŸå§‹å•è¯åˆ—è¡¨ï¼ŒèŠ‚çº¦å†…å­˜
 
 
 
@@ -64,11 +64,11 @@ data_index=0
 
 
 '''
-²ÉÓÃSkip-GramÄ£Ê½
-Éú³Éword2vecÑµÁ·Ñù±¾
-@param batch_size:Ã¿¸öÅú´ÎÑµÁ·¶àÉÙÑù±¾
-@param num_skips: ÎªÃ¿¸öµ¥´ÊÉú³É¶àÉÙÑù±¾£¨±¾´ÎÊµÑéÊÇ2¸ö£©£¬batch_size±ØĞëÊÇnum_skipsµÄÕûÊı±¶,ÕâÑù¿ÉÒÔÈ·±£ÓÉÒ»¸öÄ¿±ê´Ê»ãÉú³ÉµÄÑù±¾ÔÚÍ¬Ò»¸öÅú´ÎÖĞ¡£
-@param skip_window:µ¥´Ê×îÔ¶¿ÉÒÔÁªÏµµÄ¾àÀë£¨±¾´ÎÊµÑéÉèÎª1£¬¼´Ä¿±êµ¥´ÊÖ»ÄÜºÍÏàÁÚµÄÁ½¸öµ¥´ÊÉú³ÉÑù±¾£©£¬2*skip_window>=num_skips
+é‡‡ç”¨Skip-Gramæ¨¡å¼
+ç”Ÿæˆword2vecè®­ç»ƒæ ·æœ¬
+@param batch_size:æ¯ä¸ªæ‰¹æ¬¡è®­ç»ƒå¤šå°‘æ ·æœ¬
+@param num_skips: ä¸ºæ¯ä¸ªå•è¯ç”Ÿæˆå¤šå°‘æ ·æœ¬ï¼ˆæœ¬æ¬¡å®éªŒæ˜¯2ä¸ªï¼‰ï¼Œbatch_sizeå¿…é¡»æ˜¯num_skipsçš„æ•´æ•°å€,è¿™æ ·å¯ä»¥ç¡®ä¿ç”±ä¸€ä¸ªç›®æ ‡è¯æ±‡ç”Ÿæˆçš„æ ·æœ¬åœ¨åŒä¸€ä¸ªæ‰¹æ¬¡ä¸­ã€‚
+@param skip_window:å•è¯æœ€è¿œå¯ä»¥è”ç³»çš„è·ç¦»ï¼ˆæœ¬æ¬¡å®éªŒè®¾ä¸º1ï¼Œå³ç›®æ ‡å•è¯åªèƒ½å’Œç›¸é‚»çš„ä¸¤ä¸ªå•è¯ç”Ÿæˆæ ·æœ¬ï¼‰ï¼Œ2*skip_window>=num_skips
 '''
 def generate_batch(batch_size,num_skips,skip_window):
     global data_index
@@ -76,15 +76,15 @@ def generate_batch(batch_size,num_skips,skip_window):
     assert num_skips<=2*skip_window
     batch=np.ndarray(shape=(batch_size),dtype=np.int32)
     labels=np.ndarray(shape=(batch_size,1),dtype=np.int32)
-    span=2*skip_window+1   #Èë¶Ó³¤¶È
+    span=2*skip_window+1   #å…¥é˜Ÿé•¿åº¦
     buffer=collections.deque(maxlen=span)
     
-    for _ in range(span):  #Ë«Ïò¶ÓÁĞÌîÈë³õÊ¼Öµ
+    for _ in range(span):  #åŒå‘é˜Ÿåˆ—å¡«å…¥åˆå§‹å€¼
         buffer.append(data[data_index])
         data_index=(data_index+1)%len(data)  
         
-    for i in range(batch_size//num_skips):  #µÚÒ»´ÎÑ­»·£¬i±íÊ¾µÚ¼¸´ÎÈëË«Ïò¶ÓÁĞdeque
-        for j in range(span):  #ÄÚ²¿Ñ­»·£¬´¦Àídeque
+    for i in range(batch_size//num_skips):  #ç¬¬ä¸€æ¬¡å¾ªç¯ï¼Œiè¡¨ç¤ºç¬¬å‡ æ¬¡å…¥åŒå‘é˜Ÿåˆ—deque
+        for j in range(span):  #å†…éƒ¨å¾ªç¯ï¼Œå¤„ç†deque
             if j>skip_window:
                 batch[i*num_skips+j-1]=buffer[skip_window]
                 labels[i*num_skips+j-1,0]=buffer[j]
@@ -93,21 +93,21 @@ def generate_batch(batch_size,num_skips,skip_window):
             else:
                 batch[i*num_skips+j]=buffer[skip_window]
                 labels[i*num_skips+j,0]=buffer[j]
-        buffer.append(data[data_index])  #Èë¶ÓÒ»¸öµ¥´Ê£¬³ö¶ÓÒ»¸öµ¥´Ê
+        buffer.append(data[data_index])  #å…¥é˜Ÿä¸€ä¸ªå•è¯ï¼Œå‡ºé˜Ÿä¸€ä¸ªå•è¯
         data_index=(data_index+1)%len(data)
     return batch,labels    
 
 
-#¿ªÊ¼ÑµÁ·
+#å¼€å§‹è®­ç»ƒ
 batch_size=128   
 embedding_size=128
 skip_window=1
 num_skips=2
-num_sampled=64  #ÑµÁ·Ê±ÓÃÀ´×ö¸ºÑù±¾µÄÔëÉùµ¥´ÊµÄÊıÁ¿
-#ÑéÖ¤Êı¾İ
-valid_size=16 #³éÈ¡µÄÑéÖ¤µ¥´ÊÊı
-valid_window=100 #ÑéÖ¤µ¥´ÊÖ»´ÓÆµÊı×î¸ßµÄ100¸öµ¥´ÊÖĞ³éÈ¡
-valid_examples=np.random.choice(valid_window,valid_size,replace=False)#²»ÖØ¸´ÔÚ0¡ª¡ª10lÀïÈ¡16¸ö
+num_sampled=64  #è®­ç»ƒæ—¶ç”¨æ¥åšè´Ÿæ ·æœ¬çš„å™ªå£°å•è¯çš„æ•°é‡
+#éªŒè¯æ•°æ®
+valid_size=16 #æŠ½å–çš„éªŒè¯å•è¯æ•°
+valid_window=100 #éªŒè¯å•è¯åªä»é¢‘æ•°æœ€é«˜çš„100ä¸ªå•è¯ä¸­æŠ½å–
+valid_examples=np.random.choice(valid_window,valid_size,replace=False)#ä¸é‡å¤åœ¨0â€”â€”10lé‡Œå–16ä¸ª
 
 
 graph=tf.Graph()
@@ -115,19 +115,19 @@ with graph.as_default():
     train_inputs=tf.placeholder(tf.int32, shape=[batch_size])
     train_labels=tf.placeholder(tf.int32, shape=[batch_size,1])
     valid_dataset=tf.constant(valid_examples,dtype=tf.int32)
-    embeddings=tf.Variable(tf.random_uniform([vocabulary_size,embedding_size], -1, 1))   #³õÊ¼»¯embedding vector
+    embeddings=tf.Variable(tf.random_uniform([vocabulary_size,embedding_size], -1, 1))   #åˆå§‹åŒ–embedding vector
     embed=tf.nn.embedding_lookup(embeddings, train_inputs) 
     
-    #ÓÃNCE loss×÷ÎªÓÅ»¯ÑµÁ·µÄÄ¿±ê 
+    #ç”¨NCE lossä½œä¸ºä¼˜åŒ–è®­ç»ƒçš„ç›®æ ‡ 
     nce_weights=tf.Variable(tf.truncated_normal([vocabulary_size,embedding_size], stddev=1.0/np.math.sqrt(embedding_size)))
     nce_bias=tf.Variable(tf.zeros([vocabulary_size]))
-    loss=tf.reduce_mean(tf.nn.nce_loss(nce_weights, nce_bias, embed, train_labels, num_sampled, num_classes=vocabulary_size))
+    loss=tf.reduce_mean(tf.nn.nce_loss(nce_weights, nce_bias, train_labels, embed, num_sampled, num_classes=vocabulary_size))
     optimizer=tf.train.GradientDescentOptimizer(1.0).minimize(loss)
     norm=tf.sqrt(tf.reduce_sum(tf.square(embeddings), axis=1, keep_dims=True))
-    normalized_embeddings=embeddings/norm   #³ıÒÔÆäL2·¶ÊıºóµÃµ½±ê×¼»¯ºóµÄnormalized_embeddings
+    normalized_embeddings=embeddings/norm   #é™¤ä»¥å…¶L2èŒƒæ•°åå¾—åˆ°æ ‡å‡†åŒ–åçš„normalized_embeddings
     
-    valid_embeddings=tf.nn.embedding_lookup(normalized_embeddings,valid_dataset)    #Èç¹ûÊäÈëµÄÊÇ64£¬ÄÇÃ´¶ÔÓ¦µÄembeddingÊÇnormalized_embeddingsµÚ64ĞĞµÄvector
-    similarity=tf.matmul(valid_embeddings,normalized_embeddings,transpose_b=True)   #¼ÆËãÑéÖ¤µ¥´ÊµÄÇ¶ÈëÏòÁ¿Óë´Ê»ã±íÖĞËùÓĞµ¥´ÊµÄÏàËÆĞÔ
+    valid_embeddings=tf.nn.embedding_lookup(normalized_embeddings,valid_dataset)    #å¦‚æœè¾“å…¥çš„æ˜¯64ï¼Œé‚£ä¹ˆå¯¹åº”çš„embeddingæ˜¯normalized_embeddingsç¬¬64è¡Œçš„vector
+    similarity=tf.matmul(valid_embeddings,normalized_embeddings,transpose_b=True)   #è®¡ç®—éªŒè¯å•è¯çš„åµŒå…¥å‘é‡ä¸è¯æ±‡è¡¨ä¸­æ‰€æœ‰å•è¯çš„ç›¸ä¼¼æ€§
     
     init=tf.global_variables_initializer()
     
@@ -137,8 +137,8 @@ with tf.Session(graph=graph) as session:
     print("Initialized")
     avg_loss=0
     for step in range(num_steps):
-        batch_inputs,batch_labels=generate_batch(batch_size, num_skips, skip_window)  #²úÉúÅú´ÎÑµÁ·Ñù±¾
-        feed_dict={train_inputs:batch_inputs,train_labels:batch_labels}   #¸³Öµ
+        batch_inputs,batch_labels=generate_batch(batch_size, num_skips, skip_window)  #äº§ç”Ÿæ‰¹æ¬¡è®­ç»ƒæ ·æœ¬
+        feed_dict={train_inputs:batch_inputs,train_labels:batch_labels}   #èµ‹å€¼
         _,loss_val=session.run([optimizer,loss],feed_dict=feed_dict)
         avg_loss+=loss_val
         if step % 2000 ==0:
@@ -149,9 +149,9 @@ with tf.Session(graph=graph) as session:
         if step%10000==0:
             sim=similarity.eval()
             for i in range(valid_size):
-                valid_word=reverse_dictionary[valid_examples[i]]  #µÃµ½ÑéÖ¤µ¥´Ê
+                valid_word=reverse_dictionary[valid_examples[i]]  #å¾—åˆ°éªŒè¯å•è¯
                 top_k=8  
-                nearest=(-sim[i,:]).argsort()[1:top_k+1]     #Ã¿Ò»¸övalid_exampleÏàËÆ¶È×î¸ßµÄtop-k¸öµ¥´Ê
+                nearest=(-sim[i,:]).argsort()[1:top_k+1]     #æ¯ä¸€ä¸ªvalid_exampleç›¸ä¼¼åº¦æœ€é«˜çš„top-kä¸ªå•è¯
                 log_str="Nearest to %s:" % valid_word
                 for k in range(top_k):
                     close_word=reverse_dictionary[nearest[k]]
@@ -159,7 +159,7 @@ with tf.Session(graph=graph) as session:
                 print(log_str)
     final_embedding=normalized_embeddings.eval()
 '''
-¿ÉÊÓ»¯Word2VecÉ¢µãÍ¼²¢±£´æ
+å¯è§†åŒ–Word2Vecæ•£ç‚¹å›¾å¹¶ä¿å­˜
 '''
 def plot_with_labels(low_dim_embs,labels,filename):
     assert low_dim_embs.shape[0]>=len(labels),"more labels than embedding"
@@ -171,7 +171,7 @@ def plot_with_labels(low_dim_embs,labels,filename):
     plt.savefig(filename)
 
 '''
-tsneÊµÏÖ½µÎ¬£¬½«Ô­Ê¼µÄ128Î¬µÄÇ¶ÈëÏòÁ¿½µµ½2Î¬
+tsneå®ç°é™ç»´ï¼Œå°†åŸå§‹çš„128ç»´çš„åµŒå…¥å‘é‡é™åˆ°2ç»´
 '''
 
 tsne=TSNE(perplexity=30,n_components=2,init='pca',n_iter=5000)
